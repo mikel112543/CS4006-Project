@@ -17,21 +17,28 @@ class Algorithm {
         public int r, c;
         public double g;
         public double h;
+        public double f;
 
-        Node(Node parent, int rPos, int cPos, double g, double h) {
+        Node(Node parent, int rPos, int cPos, double g, double h, double f) {
             this.parent = parent;
             this.r = rPos;
             this.c = cPos;
             this.g = g;
             this.h = h;
+            this.f = h + g;
         }
 
-        //Compare nodes by their f values
+        public double getF() {
+            return f;
+        }
+
+        //Compare nodes by their f values & sorting by lowest
         @Override
         public int compareTo(Object o) {
             Node that = (Node) o;
-            return (int) ((this.g + this.h) - (that.g + that.h));
+            return (int) ((int) this.getF() - that.getF());
         }
+
     }
 
     private Algorithm(int[][] matrix, int rStart, int cStart) {
@@ -41,13 +48,23 @@ class Algorithm {
         this.open = new ArrayList<>();
         this.closed = new ArrayList<>();
         this.path = new ArrayList<>();
-        this.now = new Node(null, rStart, cStart, 0, 0);
+        this.now = new Node(null, rStart, cStart, 0, 0, 0);
     }
 
+    /**
+     *
+     * @return      Estimated distance between start and end nodes i.e h value
+     */
     private double manhattanDistance() {
         return Math.abs(this.now.r - this.rEnd) + Math.abs(this.now.c - this.cEnd);
     }
 
+    /**
+     *
+     * @param list  specified list to check for nodes
+     * @param node  specified node to check for
+     * @return      true if node exists in list
+     */
     private boolean findInList(List<Node> list, Node node) {
         for (Node value : list) {
             if (value.r == node.r && value.c == node.c) {
@@ -57,56 +74,72 @@ class Algorithm {
         return false;
     }
 
-
+    /**
+     * Prints matrix in grid format
+     */
     private void printMatrix() {
         for (int[] row : matrix) {
             System.out.println(Arrays.toString(row));
         }
     }
 
-    private void checkLeftToRight() {        //matrix[x][y+1/y-1]
+    /**
+     *      Checks nodes to the left and right of current position if they satisfy
+     */
+    private void checkUpToDown() {                                   //matrix[x][y+1/y-1]
         Node node;
         for(int col = -1; col <= 1; col ++) {
-            node = new Node(this.now, this.now.r, this.now.c + col, this.now.g, manhattanDistance());
+            node = new Node(this.now, this.now.r, this.now.c + col, this.now.g, manhattanDistance(), this.now.f);
             if((this.now.c + col >= 0)
-                    && col != 0
+                    && (col != 0)
                     && (this.now.c + col < matrix[0].length)
-                    && (matrix[this.now.r][this.now.c + col] != -1)
                     && (!findInList(this.closed, node))
-                    && (!findInList(this.open, node))) {
+                    && (!findInList(this.open, node))
+                    && (matrix[this.now.r][this.now.c + col] != -1)) {
                 node.g = node.parent.g + 1;
                 node.g += matrix[this.now.r][this.now.c + col];
                 this.open.add(node);
             }
         }
-        Collections.sort(open);     //Sort based on f values
+        //Sort based on f values
+        Collections.sort(open);
     }
 
-    private void checkUpToDown() {          //Matrix[x+1/x-1][y]
+    /**
+     *      Check nodes above and below current position if they satisfy
+     */
+    private void checkLeftToRight() {                                    //Matrix[x+1/x-1][y]
         Node node;
         for(int row = -1; row <= 1; row++) {
-            node = new Node(this.now, this.now.r + row, this.now.c, this.now.g, manhattanDistance());
+            node = new Node(this.now, this.now.r + row, this.now.c, this.now.g, manhattanDistance(), this.now.f);
             if((this.now.r + row >= 0)
                     && row != 0
-                    && (this.now.r + row < matrix.length)       //Within boundaries
+                    && (this.now.r + row < matrix.length)             //Within boundaries
                     && (matrix[this.now.r + row][this.now.c] != -1)   //Check position isn't blocked
-                    && (!findInList(this.closed, node))     //Check its not already in lists
+                    && (!findInList(this.closed, node))               //Check its not already in lists
                     && (!findInList(this.open, node))) {
                 node.g = node.parent.g + 1;
-                node.g += matrix[this.now.r + row][this.now.c];
+                //node.g += matrix[this.now.r + row][this.now.c];
                 this.open.add(node);
             }
         }
         Collections.sort(open);
     }
 
+    /**
+     *
+     * @param rEnd      user specified end point in row
+     * @param cEnd      user specified end point in column
+     * @return          Path size i.e the number of moves it took to get to end point
+     */
     private int findShortestPath(int rEnd, int cEnd) {
         this.rEnd = rEnd;
-        this.cEnd = cEnd;                               //this.closed.add(this.now);
+        this.cEnd = cEnd;                                           //this.closed.add(this.now);
         checkLeftToRight();
         checkUpToDown();
-        while((this.now.r != this.rEnd) && (this.now.c != this.cEnd)) {
-            this.now = this.open.get(0);
+        while ((this.now.r != this.rEnd) && (this.now.c != this.cEnd)) {
+            this.now = this.open.get(0);                            //Move to lowest f score node
+            this.open.clear();
             this.path.add(this.now);
             this.closed.add(this.now);
             checkUpToDown();
@@ -122,43 +155,21 @@ class Algorithm {
                             { 0,   0,   0, 0, },
                             {  0,  -1,  0, -1, },
                         };
-
-        Algorithm algorithm = new Algorithm(matrix, 2, 3);
-        int test = algorithm.findShortestPath(2, 0);
+        Scanner setup = new Scanner(System.in);
+        System.out.println("Input x  start coordinate: ");
+        int rStart = setup.nextInt();
+        System.out.println("Input y start coordinate: ");
+        int cStart = setup.nextInt();
+        System.out.println("Input x end coordinate: ");
+        int rEnd = setup.nextInt();
+        System.out.println("Input y end coordinate: ");
+        int cEnd = setup.nextInt();
+        Algorithm algorithm = new Algorithm(matrix, rStart, cStart);
+        algorithm.findShortestPath(rEnd, cEnd);
         algorithm.printMatrix();
-        System.out.println("Total cost: ");
+        System.out.println("Total cost: " + algorithm.path.get(algorithm.path.size()));
         matrix[algorithm.rStart][algorithm.cStart] = 5;
         matrix [algorithm.rEnd][algorithm.cEnd] = 6;
         algorithm.printMatrix();
     }
 }
-
-       /* int[][] matrix = new int[8][8];
-
-    public void matrixFill() {
-        for(int r = 0; r < matrix.length; r++) {
-            for(int c = 0; c < matrix[r].length; c++) {
-                matrix[r][c] = (int) (Math.random() * 5);
-            }
-        }
-    }
-
-    public void printMatrix() {
-        for(int[] row : matrix) {
-            System.out.println(Arrays.toString(row));
-        }
-        //for(int r = 0; r < matrix.length; r++) {
-            //for (int c = 0; c < matrix[r].length; c++) {
-                //System.out.println(matrix[r][c] + "\t");
-                //System.out.println(Arrays.deepToString(matrix));
-            //}
-        //}
-    }
-
-    public static void main(String[] args) {
-        Algorithm algorithm = new Algorithm();
-        algorithm.matrixFill();
-        algorithm.printMatrix();
-    }
-}
-        */
