@@ -1,24 +1,24 @@
 import java.util.*;
 
 class Algorithm {
-    private List<Node> open;
-    private List<Node> closed;
-    private List<Node> path;
+    private List<Node> open;        //Hold open nodes
+    private List<Node> closed;      //Hold closed nodes
+    private List<Node> path;        //Record nodes moved to
     private String[][] matrix;
     private Node now;
-    private int rStart;
-    private int cStart;
+    private int rStart;             //row start point
+    private int cStart;             //column start point
     private int pathCost = 0;
-    private int rEnd, cEnd;
-    //ROWS GO ACROSS
-    //COLUMNS GO DOWN
+    private int rEnd;               //row end point
+    private int cEnd;               //column end point
+    //ROWS GO DOWN
+    //COLUMNS GO ACROSS
 
     class Node implements Comparable {
         public Node parent;
         public int r, c;
         public double g;
         public double h;
-        public double f;
 
         Node(Node parent, int rPos, int cPos, double g, double h) {
             this.parent = parent;
@@ -45,7 +45,7 @@ class Algorithm {
         this.closed = new ArrayList<>();
         this.path = new ArrayList<>();
         this.now = new Node(null, rStart, cStart, 0, manhattanDistance(this.rStart, this.cStart));
-        this.open.add(this.now);
+        this.closed.add(this.now);
     }
 
     /**
@@ -53,7 +53,7 @@ class Algorithm {
      * @return      Estimated distance between start and end nodes i.e h value
      */
     private double manhattanDistance(int rValue, int cValue) {
-        return Math.abs( rValue - this.rEnd) + Math.abs(cValue - this.cEnd);
+        return Math.abs(rValue - this.rEnd) + Math.abs(cValue - this.cEnd);
     }
 
     /**
@@ -81,14 +81,13 @@ class Algorithm {
     }
 
     /**
-     *      Checks nodes to the left and right of current position if they satisfy
+     *  Checks nodes to the left and right of current position if they satisfy
      */
     private void checkLeftToRight() {                                   //matrix[x][y+1/y-1]
         Node node;
         for(int col = -1; col <= 1; col ++) {
             node = new Node(this.now, this.now.r, this.now.c + col, this.now.g, manhattanDistance(this.now.r, this.now.c + col));
             if(this.now.c + col >= 0
-                    && (col != 0)
                     && (this.now.c + col < matrix[0].length)
                     && (!findInList(this.closed, node))
                     && (!findInList(this.open, node))
@@ -104,12 +103,11 @@ class Algorithm {
     /**
      *      Check nodes above and below current position if they satisfy
      */
-    private void checkDownToUp() {                                    //Matrix[x+1/x-1][y]
+    private void checkDownToUp() {                                              //matrix[x+1/x-1][y]
         Node node;
         for(int row = -1; row <= 1; row++) {
             node = new Node(this.now, this.now.r + row, this.now.c, this.now.g, manhattanDistance(this.now.r + row, this.now.c));
             if((this.now.r + row >= 0)
-                    && row != 0
                     && (this.now.r + row < matrix.length)                       //Within boundaries
                     && (!matrix[this.now.r+ row][this.now.c].equals("-1"))      //Check position isn't blocked
                     && (!findInList(this.closed, node))                         //Check its not already in lists
@@ -118,6 +116,7 @@ class Algorithm {
                 this.open.add(node);
             }
         }
+        //Sort based on f values
         Collections.sort(open);
     }
 
@@ -125,7 +124,6 @@ class Algorithm {
      *
      * @param rEnd      user specified end point in row
      * @param cEnd      user specified end point in column
-     * @return          Path size i.e the number of moves it took to get to end point
      */
     private void findShortestPath(int rEnd, int cEnd) {
         this.rEnd = rEnd;
@@ -133,10 +131,23 @@ class Algorithm {
         checkLeftToRight();
         checkDownToUp();
         while ((this.now.r != this.rEnd) && (this.now.c != this.cEnd)) {
-            this.now = this.open.get(0);    //Move to lowest f score node
+            this.now = this.open.get(0);                            //Move to lowest f score node
+//            for(int i = 1; i < open.size(); i++) {
+//                if(open.get(i).h + open.get(i).g == this.now.h + this.now.g && open.get(i).h < this.now.h) {
+//                    this.now = open.get(i);
+//                    this.open.remove(i);
+//                    break;
+//                }else{
+//                    this.open.remove(this.now);
+//                }
+//            }
             matrix[this.now.r][this.now.c] = "X";
-            this.open.remove(0);
+            //this.open.remove(0);
             this.closed.add(this.now);
+            for(int i = 0; i < open.size(); i++) {
+                closed.add(open.get(i));
+                open.clear();
+            }
             this.path.add(this.now);
             pathCost++;
             checkDownToUp();
@@ -145,11 +156,12 @@ class Algorithm {
     }
 
     public static void main(String[] args) {
+
         /*String[][] matrix = {
                             {  "0", "0",  "0",  "0", },
                             {  "0", "-1",  "0",  "0", },
                             {  "0",  "0",  "0",  "0", },
-                            { "0",   "0",   "0", "0", },
+                            {  "0",  "0",  "0", "0", },
                             {  "0",  "0",  "0", "0", },
                         };
                         */
@@ -170,8 +182,8 @@ class Algorithm {
         Algorithm algorithm = new Algorithm(matrix, rStart, cStart);
         algorithm.findShortestPath(rEnd, cEnd);
         System.out.println("Total cost: " + algorithm.path.size());
-        matrix[algorithm.rStart][algorithm.cStart] = "5";
-        matrix [algorithm.rEnd][algorithm.cEnd] = "6";
+        matrix[algorithm.rStart][algorithm.cStart] = "A";
+        matrix [algorithm.rEnd][algorithm.cEnd] = "B";
         algorithm.printMatrix();
     }
 }
