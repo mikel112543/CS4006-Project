@@ -6,9 +6,8 @@ class Algorithm {
     private List<Node> path;        //Record nodes moved to
     private String[][] matrix;
     private Node now;
-    private int rStart;             //row start point
-    private int cStart;             //column start point
-    private int pathCost = 0;
+    private final int rStart;             //row start point
+    private final int cStart;             //column start point
     private int rEnd;               //row end point
     private int cEnd;               //column end point
     //ROWS GO DOWN
@@ -88,7 +87,7 @@ class Algorithm {
         for(int col = -1; col <= 1; col ++) {
             node = new Node(this.now, this.now.r, this.now.c + col, this.now.g, manhattanDistance(this.now.r, this.now.c + col));
             if(this.now.c + col >= 0
-                    && (this.now.c + col < matrix[0].length)
+                    && (now.c + col < matrix[0].length)
                     && (!findInList(this.closed, node))
                     && (!findInList(this.open, node))
                     && (!matrix[this.now.r][this.now.c + col].equals("-1"))){
@@ -130,55 +129,45 @@ class Algorithm {
         this.cEnd = cEnd;                                           //this.closed.add(this.now);
         checkLeftToRight();
         checkDownToUp();
-        while ((this.now.r != this.rEnd) && (this.now.c != this.cEnd)) {
+        while (!(this.now.r  == rEnd && this.now.c == cEnd)) {
             this.now = this.open.get(0);                            //Move to lowest f score node
-//            for(int i = 1; i < open.size(); i++) {
-//                if(open.get(i).h + open.get(i).g == this.now.h + this.now.g && open.get(i).h < this.now.h) {
-//                    this.now = open.get(i);
-//                    this.open.remove(i);
-//                    break;
-//                }else{
-//                    this.open.remove(this.now);
-//                }
-//            }
             matrix[this.now.r][this.now.c] = "X";
-            //this.open.remove(0);
-            this.closed.add(this.now);
-            for(int i = 0; i < open.size(); i++) {
-                closed.add(open.get(i));
-                open.clear();
-            }
-            this.path.add(this.now);
-            pathCost++;
+            this.closed.add(this.now);                              //Add recently moved space to closed list
+            this.path.add(this.now);                                //Add recently moved space to path list to keep track
+            this.open.clear();                                      //Reset open list
             checkDownToUp();
             checkLeftToRight();
         }
     }
 
     public static void main(String[] args) {
+        /*
+            SAMPLE MATRIX
+         0, 1, 2, 3, 4, 5, 6, 7
+      0 [0, 0, 0, 0, 0, 0, 0, 0]
+      1 [0, 0, A, 0, 0, 0, 0, 0]
+      2 [0, 0, 0, 0, 0, 0, 0, 0]
+      3 [0, 0, 0, 0, 0, 0, 0, 0]
+      4 [0, 0, 0, 0, 0, 0, 0, 0]
+      5 [0, 0, 0, 0, 0, B, 0, 0]
+      6 [0, 0, 0, 0, 0, 0, 0, 0]
+      7 [0, 0, 0, 0, 0, 0, 0, 0]
+        */
 
-        /*String[][] matrix = {
-                            {  "0", "0",  "0",  "0", },
-                            {  "0", "-1",  "0",  "0", },
-                            {  "0",  "0",  "0",  "0", },
-                            {  "0",  "0",  "0", "0", },
-                            {  "0",  "0",  "0", "0", },
-                        };
-                        */
-        String[][] matrix = new String[5][5];
+        String[][] matrix = new String[8][8];
         for (String[] strings : matrix) {
             Arrays.fill(strings, "0");
         }
 
         Scanner setup = new Scanner(System.in);
-        System.out.println("Input row number start coordinate: ");
-        int rStart = setup.nextInt();
         System.out.println("Input column number start coordinate: ");
         int cStart = setup.nextInt();
-        System.out.println("Input row number end coordinate: ");
-        int rEnd = setup.nextInt();
+        System.out.println("Input row number start coordinate: ");
+        int rStart = setup.nextInt();
         System.out.println("Input column number end coordinate: ");
         int cEnd = setup.nextInt();
+        System.out.println("Input row number end coordinate: ");
+        int rEnd = setup.nextInt();
         Algorithm algorithm = new Algorithm(matrix, rStart, cStart);
         algorithm.findShortestPath(rEnd, cEnd);
         System.out.println("Total cost: " + algorithm.path.size());
