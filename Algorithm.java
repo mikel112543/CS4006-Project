@@ -1,4 +1,8 @@
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 class Algorithm {
     private List<Node> open;        //Hold open nodes
@@ -246,8 +250,69 @@ class Algorithm {
         return true;
     }
 
+    public static class GridLayoutManager extends JFrame {
+        private Container contents;
+
+        //components;
+        private JButton[][] squares = new JButton[8][8];
+
+        //colours
+        private Color Dark_Gray = Color.DARK_GRAY;
+        private Color Green = Color.GREEN;
+        private Color Red = Color.RED;
+        private int rStart;
+        private int cStart;
+
+        public GridLayoutManager() {
+            super("A* Path-Finder");
+
+            contents = getContentPane();
+            contents.setLayout(new GridLayout(8,8));
+
+            //create event handlers:
+            ButtonHandler buttonHandler = new ButtonHandler();
+
+            //Create and add board components;
+            for (int i = 0; i < 8; i ++) {
+                for(int j = 0; i < 8; j++) {
+                    squares[i][j] = new JButton();
+                    squares[i][j].setBackground(Dark_Gray);
+                    contents.add(squares[i][j]);
+                    squares[i][j].addActionListener(buttonHandler);
+                }
+            }
+
+            setSize(500,500);
+            setResizable(false);
+            setLocationRelativeTo(null); //centers window
+            setVisible(true);
+        }
+
+        private void processClick(int i, int j) {
+            squares[this.rStart][cStart].setBackground(null);
+            squares[i][j].setBackground(Green);
+            rStart = i;
+            cStart = j;
+        }
+
+        private class ButtonHandler implements ActionListener {
+            public void actionPerformed(ActionEvent e) {
+                Object source = e.getSource();
+
+                for (int i = 0; i < 8; i++) {
+                    for(int j = 0; j < 8; j++) {
+                        if(source == squares[i][j]) {
+                            processClick(i,j);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
     public static void main(String[] args) {
-        String[][] matrix = new String[8][8];
+        /*String[][] matrix = new String[8][8];
         for (String[] strings : matrix) {
             Arrays.fill(strings, "0");
         }
@@ -286,9 +351,13 @@ class Algorithm {
         matrix[algorithm.rStart][algorithm.cStart] = "S";
         matrix[algorithm.rEnd][algorithm.cEnd] = "F";
         System.out.println("Total cost: " + algorithm.path.size());
-        algorithm.printMatrix();
+        algorithm.printMatrix(); */
 
+
+        GridLayoutManager gui = new GridLayoutManager();
+        gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+
 }
         /*
             SAMPLE MATRIX
@@ -302,4 +371,3 @@ class Algorithm {
       6 [0, 0, 0, 0, 0, 0, 0, 0]
       7 [0, 0, 0, 0, 0, 0, 0, 0]
         */
-
