@@ -191,38 +191,39 @@ class Algorithm {
      *  If not, a new location is chosen and checked.
      */
     private void randomShape() {
+        Random r = new Random();
         int randCol;
         int randRow;
-        int randLetter = (int) (Math.random() * ((4 - 1) + 1));
+        int randLetter = r.nextInt(3);
 
         boolean valid = false;
 
 
         switch (randLetter) {
-            case 1: //T
+            case 0: //T
                 while (!valid) {
-                    randCol = (int) (Math.random() * 8);                                        //Random point in matrix to place object
-                    randRow = (int) (Math.random() * 8);
+                    randCol = r.nextInt(8);                                        //Random point in matrix to place object
+                    randRow = r.nextInt(8);
                     if (randCol + 2 < matrix[0].length && randRow + 2 < matrix.length) {        //Check shape can fit in designated spot
                         createT(randRow, randCol);
                         valid = true;
                     }
                 }
                 break;
-            case 2: //L
+            case 1: //L
                 while (!valid) {
-                    randCol = (int) (Math.random() * 8);
-                    randRow = (int) (Math.random() * 8);
+                    randCol = r.nextInt(8);                                        //Random point in matrix to place object
+                    randRow = r.nextInt(8);
                     if (randCol + 1 < matrix[0].length && randRow - 3 < matrix.length) {
                         createL(randRow, randCol);
                         valid = true;
                     }
                 }
                 break;
-            case 3: //I
+            case 2: //I
                 while (!valid) {
-                    randCol = (int) (Math.random() * 8);
-                    randRow = (int) (Math.random() * 8);
+                    randCol = r.nextInt(8);                                        //Random point in matrix to place object
+                    randRow = r.nextInt(8);
                     if (randRow + 4 < matrix.length) {
                         createI(randRow, randCol);
                         valid = true;
@@ -230,6 +231,19 @@ class Algorithm {
                 }
                 break;
         }
+    }
+
+    /**
+     *
+     * @param coordinate user inputed coordinate
+     * @return          true if  1 <= coordinate <= 8 else false
+     */
+    private boolean isValid(int coordinate){
+        if(coordinate > 8 || coordinate < 1) {
+            System.out.println("Sorry incorrect input please try again");
+            return  false;
+        }
+        return true;
     }
 
     public static void main(String[] args) {
@@ -242,14 +256,30 @@ class Algorithm {
         algorithm.printMatrix();
 
         Scanner setup = new Scanner(System.in);
-        System.out.println("Input column number start coordinate: (0-7)");
+        System.out.println("Input column number start coordinate: (1-8)");
         int cStart = setup.nextInt();
-        System.out.println("Input row number start coordinate: (0-7)");
+        while(!(algorithm.isValid(cStart))) {       // re-input if isValid returns false
+            cStart = setup.nextInt();
+        }
+        System.out.println("Input row number start coordinate: (1-8)");
         int rStart = setup.nextInt();
-        System.out.println("Input column number end coordinate: (0-7)");
+        while(!(algorithm.isValid(rStart))) {       // re-input if isValid returns false
+            rStart = setup.nextInt();
+        }
+        System.out.println("Input column number end coordinate: (1-8)");
         int cEnd = setup.nextInt();
-        System.out.println("Input row number end coordinate: (0-7)");
+        while(!(algorithm.isValid(cEnd))) {     // re-input if isValid returns false
+            cEnd = setup.nextInt();
+        }
+        System.out.println("Input row number end coordinate: (1-8)");
         int rEnd = setup.nextInt();
+        while(!(algorithm.isValid(rEnd))) {     // re-input if isValid returns false
+            rEnd = setup.nextInt();
+        }
+        cStart -= 1;       //start matrix at one
+        rStart -= 1;
+        cEnd -= 1;
+        rEnd -= 1;
         algorithm = new Algorithm(matrix, rStart, cStart);
         System.out.println(" ");
         algorithm.findShortestPath(rEnd, cEnd);
