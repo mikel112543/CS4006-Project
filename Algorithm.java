@@ -1,3 +1,10 @@
+/**
+ * @author - Michael Danaher - 18221726
+ * @author - Aaron Foster - 18232086
+ * @author - Jamie McNamara - 18250599
+ * @author - John Maguire - 18250076
+ */
+
 import java.util.*;
 
 class Algorithm {
@@ -41,7 +48,6 @@ class Algorithm {
     }
 
     /**
-     *
      * @param matrix Matrix used to find the shortest path
      * @param rStart User specified start row
      * @param cStart User specified start column
@@ -148,9 +154,8 @@ class Algorithm {
     }
 
     /**
-     *
-     * @param randRow   starting row point for letter shaped obstacle placement
-     * @param randCol   starting column for letter shaped obstacle placement
+     * @param randRow starting row point for letter shaped obstacle placement
+     * @param randCol starting column for letter shaped obstacle placement
      */
     private void createT(int randRow, int randCol) {
         for (int i = 0; i < 3; i++) {
@@ -162,9 +167,8 @@ class Algorithm {
     }
 
     /**
-     *
-     * @param randRow   starting row point for letter shaped obstacle placement
-     * @param randCol   starting column for letter shaped obstacle placement
+     * @param randRow starting row point for letter shaped obstacle placement
+     * @param randCol starting column for letter shaped obstacle placement
      */
     private void createL(int randRow, int randCol) {
         for (int i = 0; i < 2; i++) {
@@ -176,9 +180,8 @@ class Algorithm {
     }
 
     /**
-     *
-     * @param randRow   starting row point for letter shaped obstacle placement
-     * @param randCol   starting column for letter shaped obstacle placement
+     * @param randRow starting row point for letter shaped obstacle placement
+     * @param randCol starting column for letter shaped obstacle placement
      */
     private void createI(int randRow, int randCol) {
         for (int i = 0; i < 5; i++) {
@@ -187,8 +190,8 @@ class Algorithm {
     }
 
     /**
-     *  Randomly picks 1 of 3 shapes and checks if it fits in random location.
-     *  If not, a new location is chosen and checked.
+     * Randomly picks 1 of 3 shapes and checks if it fits in random location.
+     * If not, a new location is chosen and checked.
      */
     private void randomShape() {
         Random r = new Random();
@@ -234,14 +237,13 @@ class Algorithm {
     }
 
     /**
-     *
      * @param coordinate user inputed coordinate
-     * @return          true if  1 <= coordinate <= 8 else false
+     * @return true if  1 <= coordinate <= 8 else false
      */
-    private boolean isValid(int coordinate){
-        if(coordinate > 8 || coordinate < 1) {
+    private boolean isValid(int coordinate) {
+        if (coordinate > 8 || coordinate < 1) {
             System.out.println("Sorry incorrect input please try again");
-            return  false;
+            return false;
         }
         return true;
     }
@@ -258,22 +260,22 @@ class Algorithm {
         Scanner setup = new Scanner(System.in);
         System.out.println("Input column number start coordinate: (1-8)");
         int cStart = setup.nextInt();
-        while(!(algorithm.isValid(cStart))) {       // re-input if isValid returns false
+        while (!(algorithm.isValid(cStart))) {       // re-input if isValid returns false
             cStart = setup.nextInt();
         }
         System.out.println("Input row number start coordinate: (1-8)");
         int rStart = setup.nextInt();
-        while(!(algorithm.isValid(rStart))) {       // re-input if isValid returns false
+        while (!(algorithm.isValid(rStart))) {       // re-input if isValid returns false
             rStart = setup.nextInt();
         }
         System.out.println("Input column number end coordinate: (1-8)");
         int cEnd = setup.nextInt();
-        while(!(algorithm.isValid(cEnd))) {     // re-input if isValid returns false
+        while (!(algorithm.isValid(cEnd))) {     // re-input if isValid returns false
             cEnd = setup.nextInt();
         }
         System.out.println("Input row number end coordinate: (1-8)");
         int rEnd = setup.nextInt();
-        while(!(algorithm.isValid(rEnd))) {     // re-input if isValid returns false
+        while (!(algorithm.isValid(rEnd))) {     // re-input if isValid returns false
             rEnd = setup.nextInt();
         }
         cStart -= 1;       //start matrix at one
@@ -287,13 +289,10 @@ class Algorithm {
         matrix[algorithm.rEnd][algorithm.cEnd] = "F";
         System.out.println("Total cost: " + algorithm.path.size());
         algorithm.printMatrix();
-
     }
-}
-        /*
+}       /*
             SAMPLE MATRIX
-         0, 1, 2, 3, 4, 5, 6, 7
-      0 [0, 0, 0, 0, 0, 0, 0, 0]
+         1, 2, 3, 4, 5, 6, 7, 8
       1 [0, 0, 0, 0, 0, 0, 0, 0]
       2 [0, 0, 0, 0, 0, 0, 0, 0]
       3 [0, 0, 0, 0, 0, 0, 0, 0]
@@ -301,5 +300,6 @@ class Algorithm {
       5 [0, 0, 0, 0, 0, 0, 0, 0]
       6 [0, 0, 0, 0, 0, 0, 0, 0]
       7 [0, 0, 0, 0, 0, 0, 0, 0]
+      8 [0, 0, 0, 0, 0, 0, 0, 0]
         */
 
