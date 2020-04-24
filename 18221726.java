@@ -205,7 +205,7 @@ class Algorithm {
         switch (randLetter) {
             case 0: //T
                 while (!valid) {
-                    randCol = r.nextInt(8);                                        //Random point in matrix to place object
+                    randCol = r.nextInt(8);                                             //Random point in matrix to place object
                     randRow = r.nextInt(8);
                     if (randCol + 2 < matrix[0].length && randRow + 2 < matrix.length) {        //Check shape can fit in designated spot
                         createT(randRow, randCol);
@@ -241,7 +241,7 @@ class Algorithm {
      * @return true if  1 <= coordinate <= 8 else false
      */
     private boolean isValid(int coordinate) {
-        if (coordinate > 8 || coordinate < 1) {
+        if (coordinate > 8 || coordinate < 1)  {
             System.out.println("Sorry incorrect input please try again");
             return false;
         }
