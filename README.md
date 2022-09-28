@@ -1,4 +1,4 @@
-# CS4006-Project
+# A* Search Algorithm
 
 Java project showcasing the A* Search algorithm using the Manhatten Distance Heuristics.
 A capitalized "L", "T", or "I" is placed within an 8x8 2D matrix.
